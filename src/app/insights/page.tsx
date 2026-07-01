@@ -14,7 +14,7 @@ const FALLBACK_HERO_SUBTITLE =
   'Exploring the frontiers of computing, networking, and knowledge systems to build infrastructure that empowers humanity.'
 const FALLBACK_CARDS = {
   'card-publications': { title: 'Publications' },
-  'card-talks': { title: 'Talks' },
+  'card-talks': { title: 'Talks & Podcasts' },
   'card-blog': { title: 'Blog' },
 }
 
