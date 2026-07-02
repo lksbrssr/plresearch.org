@@ -53,6 +53,7 @@ export default async function InsightsPage() {
           title: post.title,
           description: post.summary,
           areas: post.areas ?? [],
+          date: post.date || '',
         }
       }),
     },
@@ -68,6 +69,7 @@ export default async function InsightsPage() {
         eyebrow: [p.venue, p.date && new Date(p.date).getFullYear()].filter(Boolean).join(' · '),
         title: p.title,
         areas: p.areas ?? [],
+        date: p.date || '',
       })),
     },
     {
@@ -83,6 +85,7 @@ export default async function InsightsPage() {
         title: t.title,
         description: t.abstract,
         areas: t.areas ?? [],
+        date: t.date || '',
       })),
     },
   ].filter((s) => s.items.length > 0)
