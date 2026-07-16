@@ -96,12 +96,12 @@ export default function CookieConsent({ gaId }: { gaId: string }) {
           role="dialog"
           aria-modal="false"
           aria-label="Cookie consent"
-          className="fixed inset-x-3 bottom-3 z-[100] mx-auto max-w-2xl rounded-2xl border border-black/10 bg-white p-5 shadow-2xl dark:border-white/15 dark:bg-neutral-900"
+          className="fixed inset-x-3 bottom-3 z-[100] mx-auto max-w-2xl rounded-2xl border border-black/10 bg-white p-5 shadow-2xl"
         >
-          <p className="m-0 text-[15px] font-semibold text-black dark:text-white">
+          <p className="m-0 text-[15px] font-semibold text-black">
             Analytics cookies
           </p>
-          <p className="mt-1.5 mb-4 text-[13.5px] leading-relaxed text-neutral-600 dark:text-neutral-300">
+          <p className="mt-1.5 mb-4 text-[13.5px] leading-relaxed text-gray-600">
             We&apos;d like to use Google Analytics to understand how this site is
             used. It sets cookies only if you agree. Nothing loads until you
             choose, and you can change your mind anytime via{' '}
@@ -125,14 +125,14 @@ export default function CookieConsent({ gaId }: { gaId: string }) {
             <button
               type="button"
               onClick={() => choose('denied')}
-              className="w-full rounded-full border border-black/15 bg-neutral-100 px-5 py-3 text-[14.5px] font-semibold text-black transition-colors hover:bg-neutral-200 dark:border-white/20 dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700"
+              className="w-full rounded-full border border-black/15 bg-gray-100 px-5 py-3 text-[14.5px] font-semibold text-black transition-colors hover:bg-gray-200"
             >
               Reject
             </button>
             <button
               type="button"
               onClick={() => choose('granted')}
-              className="w-full rounded-full bg-black px-5 py-3 text-[14.5px] font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
+              className="w-full rounded-full bg-black px-5 py-3 text-[14.5px] font-semibold text-white transition-colors hover:bg-gray-800"
             >
               Accept
             </button>
