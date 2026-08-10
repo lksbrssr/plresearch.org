@@ -163,8 +163,11 @@ export default async function ImpactPage() {
                  hypercerts. */
               /* Full-bleed grey band: break out of the centered max-w-6xl
                  methodology container to span the whole viewport width, then
-                 re-center the content in an inner max-w-6xl wrapper. */
-              <section className="relative left-1/2 my-12 w-screen -translate-x-1/2 border-y border-gray-200 bg-gray-50">
+                 re-center the content in an inner max-w-6xl wrapper. Use
+                 negative margins (not a transform) for the break-out — a
+                 transformed ancestor would become the containing block for the
+                 detail modal's `position: fixed`, trapping it inside this band. */
+              <section className="my-12 w-screen ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] border-y border-gray-200 bg-gray-50">
                 <div className="mx-auto max-w-6xl px-6 py-14 lg:py-16">
                 <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                   <div className="max-w-2xl">
