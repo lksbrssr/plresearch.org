@@ -12,6 +12,7 @@ import { FOCUS_AREAS, type FocusAreaKey } from '@/lib/inflection-points'
 import { instrumentsForArea, withOpenAlex, withPatentVintage, type InstrumentRecord } from '@/lib/velocity-instruments'
 import { loadAllOpenAlex } from '@/lib/velocity-openalex'
 import { loadAllLatency, withLatency } from '@/lib/velocity-latency'
+import { loadMarketCurve, withMarketCurve } from '@/lib/velocity-market-curve'
 
 // The impact page reads field velocity: the interventions we run, the five
 // instruments we read a field's rate of change with, and the inflection points
@@ -81,8 +82,15 @@ export default async function ImpactPage() {
   // no-op, leaving the documented `unwired` records in place.
   const openAlex = loadAllOpenAlex()
   const latency = loadAllLatency()
+  const marketCurve = loadMarketCurve()
   const recordsByArea = Object.fromEntries(
-    FOCUS_AREAS.map((fa) => [fa.key, withLatency(withOpenAlex(withPatentVintage(instrumentsForArea(fa.key), fa.key), openAlex[fa.key]), latency[fa.key])]),
+    FOCUS_AREAS.map((fa) => [
+      fa.key,
+      withMarketCurve(
+        withLatency(withOpenAlex(withPatentVintage(instrumentsForArea(fa.key), fa.key), openAlex[fa.key]), latency[fa.key]),
+        marketCurve[fa.key],
+      ),
+    ]),
   ) as Partial<Record<FocusAreaKey, InstrumentRecord[]>>
 
   // Example idea-vintage series per field, for the methodology modal that explains

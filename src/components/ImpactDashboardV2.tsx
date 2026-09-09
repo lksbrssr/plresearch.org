@@ -48,10 +48,11 @@ export type LiveMetric = { value: string; label: string }
 export type LiveOutputs = Record<string, LiveMetric[]>
 export type MarketSignals = Record<string, MarketSignal>
 
-const PLATFORM_LABEL: Record<'polymarket' | 'kalshi' | 'metaculus', string> = {
+const PLATFORM_LABEL: Record<'polymarket' | 'kalshi' | 'metaculus' | 'futarchy', string> = {
   polymarket: 'Polymarket',
   kalshi: 'Kalshi',
   metaculus: 'Metaculus',
+  futarchy: 'Bayes Market',
 }
 
 const FA_ICON: Record<FocusAreaKey, AreaIconType> = {
@@ -264,10 +265,14 @@ function StaleMarker({ size = 'sm' }: { size?: 'sm' | 'lg' }) {
 
 function InstrumentCell({ record, markets }: { record: InstrumentRecord; markets?: MarketSignal[] }) {
   const inst = INSTRUMENT_BY_ID[record.instrument]
-  // Markets instrument with live mapped forecasts overrides the static state.
-  // We show how many bets the field carries and the capital at stake behind
-  // them, rather than a single point-in-time probability (which reads as noise).
-  if (record.instrument === 'markets' && markets && markets.length) {
+  // When the markets instrument carries an aggregated term structure (a reading
+  // with a series — the same milestone priced across horizons), show that curve
+  // and its implied date via the normal reading path below. Otherwise fall back
+  // to counting the field's live mapped bets, which reads better than a single
+  // point-in-time probability.
+  const isMarketsTermStructure =
+    record.instrument === 'markets' && record.state === 'reading' && !!record.series && record.series.length > 1
+  if (record.instrument === 'markets' && markets && markets.length && !isMarketsTermStructure) {
     const totalVolume = markets.reduce((sum, s) => sum + (s.volume ?? 0), 0)
     return (
       <div className="flex flex-col gap-1.5 border-l-2 border-gray-100 pl-3">
@@ -304,6 +309,9 @@ function InstrumentCell({ record, markets }: { record: InstrumentRecord; markets
             {shownDirection(record) && <DirectionChip direction={shownDirection(record)!} />}
             {isStaleReading(record) && <StaleMarker />}
             {record.measuredAt && <span className="tabular-nums">measured {shortDate(record.measuredAt)}</span>}
+            {record.instrument === 'markets' && markets && markets.length > 0 && (
+              <span>+ {markets.length} bet{markets.length === 1 ? '' : 's'} tracked</span>
+            )}
           </span>
         </>
       )}
@@ -414,7 +422,7 @@ function PatentVintagePanel({ pv }: { pv: NonNullable<InstrumentRecord['patentVi
   )
 }
 
-function MarketsPanel({ markets }: { markets: MarketSignal[] }) {
+function MarketsPanel({ markets, hasTermStructure = false }: { markets: MarketSignal[]; hasTermStructure?: boolean }) {
   return (
     <div>
       <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
@@ -423,8 +431,11 @@ function MarketsPanel({ markets }: { markets: MarketSignal[] }) {
         ))}
       </div>
       <p className="mt-2 text-[11px] leading-relaxed text-gray-400">
-        External forecast markets mapped to this field&rsquo;s markers. A term structure across horizons
-        is not yet aggregated. Read with care: market moves partly reflect our own attention work.
+        Per-marker forecasts mapped to this field.{' '}
+        {hasTermStructure
+          ? 'The term structure across horizons is shown above.'
+          : 'A term structure across horizons is not yet aggregated.'}{' '}
+        Read with care: market moves partly reflect our own attention work.
       </p>
     </div>
   )
@@ -489,6 +500,9 @@ function VelocityModal({
               const inst = INSTRUMENT_BY_ID[r.instrument]
               const liveMarkets = r.instrument === 'markets' && markets ? markets : []
               const isLiveMarkets = liveMarkets.length > 0
+              // The markets instrument can now carry BOTH an aggregated term
+              // structure (a reading with a series) and the per-point live bets.
+              const isTermStructure = r.instrument === 'markets' && r.state === 'reading' && !!r.series && r.series.length > 1
               return (
                 <div key={r.instrument} className="border-t border-gray-100 pt-5 first:border-t-0 first:pt-0">
                   <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -525,9 +539,7 @@ function VelocityModal({
                     )}
                   </div>
 
-                  {isLiveMarkets && <MarketsPanel markets={liveMarkets} />}
-
-                  {!isLiveMarkets && r.state === 'reading' && (
+                  {(isTermStructure || !isLiveMarkets) && r.state === 'reading' && (
                     <div>
                       <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
                         {r.series && r.series.length > 1 && (
@@ -586,6 +598,12 @@ function VelocityModal({
                       {r.instrument === 'idea_vintage' && r.patentVintage && (
                         <PatentVintagePanel pv={r.patentVintage} />
                       )}
+                    </div>
+                  )}
+
+                  {isLiveMarkets && (
+                    <div className={isTermStructure ? 'mt-4' : undefined}>
+                      <MarketsPanel markets={liveMarkets} hasTermStructure={isTermStructure} />
                     </div>
                   )}
 

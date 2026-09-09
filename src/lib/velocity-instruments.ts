@@ -398,8 +398,14 @@ export const INSTRUMENT_RECORDS: Partial<Record<FocusAreaKey, InstrumentRecord[]
       // Single peer-reviewed cumulative figure, no year-by-year series yet, so no
       // trend arrow is drawn. Capital raised by BCI companies remains unwired.
       // TODO(lukas): add a ClinicalTrials.gov pull for a monthly-refreshing series.
+      // That pull should also cover the therapeutic side: Robinson (IEEE Pulse 2025,
+      // adapting Woods et al.) reports psychiatric brain-stimulation trials doubling
+      // every ~4.7 years since 2000. His headline (~100× since 2000) and the fitted
+      // doubling time don't reconcile (100× at 4.7y needs ~31 years), so we cite the
+      // claim in the trend text but wire no series until it comes from primary
+      // registry data we can reconcile ourselves.
       trend:
-        'A peer-reviewed count across all iBCI trials, ~150× below the 10,000-by-2030 milestone. Enrolment is now accelerating across several companies (Neuralink 21, Synchron, Precision Neuroscience).',
+        'A peer-reviewed count across all iBCI trials, ~150× below the 10,000-by-2030 milestone. Enrolment is now accelerating across several companies (Neuralink 21, Synchron, Precision Neuroscience). On the therapeutic side, clinical trials of brain stimulation for psychiatric conditions have doubled roughly every 4.7 years since 2000 — trial starts are among the field’s costliest commitments.',
       window: '1998 → 2024',
       measuredAt: '2024-01-01',
       checkedAt: '2024-01-01',
@@ -407,6 +413,10 @@ export const INSTRUMENT_RECORDS: Partial<Record<FocusAreaKey, InstrumentRecord[]
         {
           label: 'Patrick-Krueger et al. (2024), Nature Reviews Bioengineering',
           url: 'https://doi.org/10.1038/s44222-024-00239-5',
+        },
+        {
+          label: 'Robinson (2025), IEEE Pulse — psychiatric-stimulation trial growth',
+          url: 'https://pubmed.ncbi.nlm.nih.gov/40668700/',
         },
         { label: 'PL Neuro — 10k-by-2030 milestone', url: 'https://www.plneuro.xyz/' },
       ],
